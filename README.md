@@ -24,17 +24,22 @@ FinCommand is a premium financial intelligence platform that transforms a small 
 
 ## Quick Start
 
-### 1. Install dependencies (once)
-```bash
-bash install.sh
+### Start the application
+
+The startup scripts will automatically check for and install any missing dependencies for both the frontend and backend.
+
+**For Windows:**
+Double-click `start.bat` in your File Explorer, or run it via terminal:
+```cmd
+.\start.bat
 ```
 
-### 2. Start the application
+**For Mac / Linux / Git Bash:**
 ```bash
 bash start.sh
 ```
 
-### 3. Open in your browser
+### Open in your browser
 ```
 http://localhost:5173
 ```
