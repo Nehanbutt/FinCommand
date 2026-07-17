@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Zap, ArrowRight, ArrowLeft, Sparkles, Loader2 } from 'lucide-react';
+import { Zap, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import OnboardingBackground from '@/components/OnboardingBackground';
+import { FullScreenLoader, LoaderRing } from '@/components/Loader';
 import { buildSampleCompany } from '@/lib/sampleData';
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'PKR', 'INR', 'AED', 'CAD', 'AUD'];
@@ -35,14 +36,11 @@ export default function OnboardingPage() {
 
   if (!hasHydrated || company) {
     return (
-      <div className="relative min-h-screen flex flex-col items-center justify-center gap-4 overflow-hidden" style={{ background: '#05070D' }}>
+      <div className="relative min-h-screen overflow-hidden" style={{ background: '#05070D' }}>
         <OnboardingBackground />
-        <div className="relative z-10 w-14 h-14 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#3B5BFF] to-[#7C9BFF] animate-pulse" />
-          <div className="absolute inset-0 rounded-2xl border-2 border-[#7C9BFF]/40 border-t-transparent animate-spin" />
-          <Zap size={22} className="relative text-white" />
+        <div className="relative z-10">
+          <FullScreenLoader />
         </div>
-        <p className="relative z-10 text-sm text-slate-500 font-medium tracking-wide">Loading FinCommand…</p>
       </div>
     );
   }
@@ -155,7 +153,7 @@ export default function OnboardingPage() {
             >
               {submitting ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" /> Setting up your command center…
+                  <LoaderRing size="sm" /> Setting up your command center…
                 </>
               ) : (
                 <>

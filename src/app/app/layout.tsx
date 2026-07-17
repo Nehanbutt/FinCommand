@@ -6,6 +6,7 @@ import { Menu, Zap } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { Sidebar } from '@/components/Sidebar';
 import PageTransition from '@/components/PageTransition';
+import { FullScreenLoader } from '@/components/Loader';
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -22,13 +23,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (!hasHydrated) {
     return (
-      <div className="app-scope min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: 'var(--bg-primary)' }}>
-        <div className="relative w-14 h-14 flex items-center justify-center">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-brass-400 to-brass-600 animate-pulse" />
-          <div className="absolute inset-0 rounded-2xl border-2 border-brass-300/40 border-t-transparent animate-spin" />
-          <Zap size={22} className="relative text-white" />
-        </div>
-        <p className="text-sm text-slate-500 font-medium tracking-wide">Loading FinCommand…</p>
+      <div className="app-scope">
+        <FullScreenLoader />
       </div>
     );
   }

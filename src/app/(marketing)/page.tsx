@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '@/store/useStore';
+import { LoaderRing } from '@/components/Loader';
 import GetStartedButton from '@/components/landing/GetStartedButton';
 import DottedBackground from '@/components/landing/DottedBackground';
 import TypingText from '@/components/landing/TypingText';
@@ -36,7 +37,7 @@ export default function MarketingHome() {
   if (!hasHydrated || (checked && company)) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center">
-        <div className="h-6 w-6 rounded-full border-2 border-gloss-accent2 border-t-transparent animate-spin" />
+        <LoaderRing size="sm" />
       </div>
     );
   }

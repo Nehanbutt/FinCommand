@@ -212,6 +212,32 @@ input[type='number'].keep-spinner::-webkit-outer-spin-button {
 }
 .fade-in { animation: fadeIn 0.4s ease forwards; }
 
+/* ==========================================================================
+   Conic-gradient loading ring (see src/components/Loader.tsx).
+   Single element: a spinning gradient arc, hollowed by a radial mask.
+   ========================================================================== */
+@keyframes fc-ring-spin { to { transform: rotate(360deg); } }
+
+.fc-loader-ring {
+  border-radius: 50%;
+  background: conic-gradient(from 90deg, transparent 0deg, var(--brass) 150deg, var(--brass-light) 320deg, transparent 360deg);
+  /* Hollow it out so only the arc shows, not a filled disc. */
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 calc(100% - 3px));
+  animation: fc-ring-spin 0.9s linear infinite;
+  /* Slightly thicker, softer arc than a hairline border, reads as premium. */
+  filter: drop-shadow(0 0 6px rgba(59, 91, 255, 0.35));
+}
+/* For the small inline variant, tighten the mask thickness so the arc scales
+   down gracefully instead of looking chunky at 18px. */
+.fc-loader-ring[style*='width: 18px'] {
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 1.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 2.5px), #000 calc(100% - 1.5px));
+  filter: none;
+}
+/* prefers-reduced-motion is handled globally (animation clamped to ~0ms),
+   but keep the ring visible as a static arc so the UI never looks empty. */
+
 .badge {
   display: inline-flex;
   align-items: center;

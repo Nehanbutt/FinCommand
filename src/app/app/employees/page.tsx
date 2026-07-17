@@ -1,11 +1,12 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import { Plus, Upload, Trash2, Search, Pencil, ChevronDown, Sparkles, Loader2, Users } from 'lucide-react';
+import { Plus, Upload, Trash2, Search, Pencil, ChevronDown, Sparkles, Users } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { Employee, EmploymentStatus, RoleArchetype } from '@/lib/types';
 import { suggestArchetype, ARCHETYPE_WEIGHTS } from '@/lib/performanceEngine';
-import { buildSampleEmployees } from '@/lib/sampleData';
+import { SAMPLE_EMPLOYEE_DATASETS } from '@/lib/sampleData';
+import { LoaderRing } from '@/components/Loader';
 
 const EMPTY_FORM = {
   name: '', department: '', position: '', salary: '', joining_date: '',
@@ -21,6 +22,12 @@ const ARCHETYPE_OPTIONS: { value: RoleArchetype; label: string; hint: string }[]
   { value: 'service', label: ARCHETYPE_WEIGHTS.service.label, hint: ARCHETYPE_WEIGHTS.service.outputHint },
   { value: 'support', label: ARCHETYPE_WEIGHTS.support.label, hint: ARCHETYPE_WEIGHTS.support.outputHint },
 ];
+
+/** Hard ceiling on sample-data employees. Justified: the scoring engine needs
+ *  ≥8 peers per cohort to compare fairly (see MIN_COHORT_SIZE in the engine),
+ *  so ~30 gives several healthy cohorts without turning the roster into noise.
+ *  Power users can still go past this via CSV import. */
+const SAMPLE_MAX = 30;
 
 function parseCsv(text: string): Record<string, string>[] {
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
@@ -104,22 +111,52 @@ export default function EmployeesPage() {
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
   const [showPerf, setShowPerf] = useState(true);
   const [importMsg, setImportMsg] = useState<string | null>(null);
+  const [capMsg, setCapMsg] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [loadingSample, setLoadingSample] = useState(false);
+  // Index into SAMPLE_EMPLOYEE_DATASETS — advances each click so successive
+  // "Load sample data" presses build the roster up across all three batches.
+  const [sampleSetIndex, setSampleSetIndex] = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleLoadSample = () => {
     if (loadingSample) return;
+
+    // Enforce the sample ceiling before doing anything.
+    const room = SAMPLE_MAX - employees.length;
+    if (room <= 0) {
+      setCapMsg(
+        `${SAMPLE_MAX} is the sample ceiling — enough for several stable peer cohorts (the engine wants ≥8 per group) without crowding the table. Import a CSV to go beyond.`
+      );
+      setImportMsg(null);
+      return;
+    }
+
     setLoadingSample(true);
+    setCapMsg(null);
     // Brief, deliberate loading beat (not a fake stall) so the action reads
     // as "building your roster" rather than an instant, jarring pop-in.
     window.setTimeout(() => {
-      const added = loadSampleEmployees(buildSampleEmployees());
-      setImportMsg(
-        added > 0
-          ? `Loaded ${added} sample employees — spanning every role type, so Employee Intelligence has something real to show.`
-          : 'Sample roster is already loaded.'
-      );
+      const batch = SAMPLE_EMPLOYEE_DATASETS[sampleSetIndex % SAMPLE_EMPLOYEE_DATASETS.length];
+      // Only load as many as the cap leaves room for.
+      const slice = batch.slice(0, room);
+      const added = loadSampleEmployees(slice);
+      // Advance the cycle for the next click (wraps around, though the dedup
+      // in the store means a fully-cycled roster will just report "already loaded").
+      setSampleSetIndex((i) => i + 1);
+
+      if (employees.length + added >= SAMPLE_MAX) {
+        setCapMsg(
+          `Sample limit reached (${SAMPLE_MAX}). That's enough for several stable peer cohorts (the engine wants ≥8 per group) without crowding the table. Import a CSV to go beyond.`
+        );
+        setImportMsg(null);
+      } else if (added > 0) {
+        setImportMsg(
+          `Loaded ${added} sample employees — spanning every role type, so Employee Intelligence has something real to show.`
+        );
+      } else {
+        setImportMsg('That batch is already on the roster.');
+      }
       setLoadingSample(false);
     }, 450);
   };
@@ -214,7 +251,7 @@ export default function EmployeesPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search name, department, position…"
-              className="input-field !w-64 pl-9"
+              className="input-field !w-64 !pl-9"
             />
           </div>
           <label className="btn-secondary text-sm py-2.5 px-4 flex items-center gap-2 cursor-pointer">
@@ -226,7 +263,7 @@ export default function EmployeesPage() {
             disabled={loadingSample}
             className="btn-secondary text-sm py-2.5 px-4 flex items-center gap-2 disabled:opacity-70"
           >
-            {loadingSample ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
+            {loadingSample ? <LoaderRing size="sm" /> : <Sparkles size={15} />}
             {loadingSample ? 'Loading…' : 'Load sample data'}
           </button>
           <button onClick={showForm ? () => setShowForm(false) : openAddForm} className="btn-primary text-sm py-2.5 px-4 flex items-center gap-2">
@@ -237,6 +274,18 @@ export default function EmployeesPage() {
 
       {importMsg && <p className="text-sm text-slate-400">{importMsg}</p>}
 
+      {capMsg && (
+        <div className="flex items-start gap-2.5 rounded-xl border border-amber-400/25 bg-amber-400/[0.07] px-4 py-3">
+          <span
+            className="mt-0.5 shrink-0 flex h-5 w-5 items-center justify-center rounded-full text-[11px] font-bold"
+            style={{ background: 'rgba(232,163,61,0.18)', color: '#E8A33D' }}
+          >
+            !
+          </span>
+          <p className="text-sm text-amber-200/80 leading-snug">{capMsg}</p>
+        </div>
+      )}
+
       {employees.length === 0 && !showForm && (
         <div className="card p-8 flex flex-col items-center text-center gap-3 border-dashed">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-gradient-to-br from-brass-400/20 to-brass-600/20">
@@ -246,7 +295,8 @@ export default function EmployeesPage() {
             <p className="text-white font-semibold mb-1">No employees on the roster yet</p>
             <p className="text-sm text-slate-500 max-w-md">
               Add your team manually, import a CSV, or load a ready-made sample roster to see Employee Intelligence
-              in action right away — ten employees across every role type and data scenario.
+              in action right away. Each click loads another batch (up to {SAMPLE_MAX}) spanning every role type,
+              performance band, and data scenario.
             </p>
           </div>
           <div className="flex gap-3 mt-1">
@@ -255,7 +305,7 @@ export default function EmployeesPage() {
               disabled={loadingSample}
               className="btn-primary text-sm py-2.5 px-4 flex items-center gap-2 disabled:opacity-70"
             >
-              {loadingSample ? <Loader2 size={15} className="animate-spin" /> : <Sparkles size={15} />}
+              {loadingSample ? <LoaderRing size="sm" /> : <Sparkles size={15} />}
               {loadingSample ? 'Loading…' : 'Load sample data'}
             </button>
             <button onClick={openAddForm} className="btn-secondary text-sm py-2.5 px-4 flex items-center gap-2">
