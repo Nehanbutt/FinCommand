@@ -1,0 +1,7 @@
+name,department,position,salary,joining_date,working_hours,employment_status,role_archetype,output_label,actual_output,expected_output,output_unit_value,error_count
+Sarah Chen,Engineering,Senior Engineer,145000,2022-03-14,40,full_time,support,shipped features,6,,,0
+Marcus Lee,Sales,Account Executive,98000,2023-01-09,40,full_time,volume,deals closed,9,10,4200,1
+Priya Patel,Marketing,Marketing Manager,110000,2021-11-02,40,full_time,support,campaigns launched,4,,,0
+Diego Ramirez,Engineering,Frontend Engineer,120000,2023-06-19,40,full_time,support,shipped features,5,,,0
+Amara Okafor,Operations,Ops Lead,105000,2022-08-01,35,part_time,transaction,orders processed,410,380,18,3
+Tom Becker,Design,Product Designer,115000,2023-02-27,40,full_time,support,designs shipped,3,,,0

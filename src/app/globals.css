@@ -1,0 +1,378 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', P052, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Roboto Mono', Menlo, Consolas, monospace;
+
+  /* Dark theme (default) — shares the indigo/periwinkle brand accent used
+     on the marketing pages. */
+  --bg-primary: #05070D;
+  --bg-surface: #10141F;
+  --bg-card: #12151F;
+  --bg-card-2: #171b28;
+  --border-subtle: rgba(148, 163, 184, 0.1);
+  --border-strong: rgba(148, 163, 184, 0.18);
+  --text-primary: #F2F4F8;
+  --text-muted: #8B93A7;
+  --text-faint: #55607A;
+  --input-bg: #0B0E17;
+  --brass: #3B5BFF;
+  --brass-light: #7C9BFF;
+  --blue: #4C8CFF;
+  --green: #3DDC97;
+  --red: #E8555A;
+}
+
+/* Light theme — only takes effect inside .app-scope (the dashboard, onboarding,
+   and their sidebars), so the always-dark marketing pages are never touched. */
+[data-theme='light'] .app-scope {
+  --bg-primary: #F6F7FB;
+  --bg-surface: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-card-2: #F0F2F8;
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-strong: rgba(15, 23, 42, 0.14);
+  --text-primary: #0F172A;
+  --text-muted: #5B6478;
+  --text-faint: #8A93A6;
+  --input-bg: #FBFBFE;
+  --brass: #3B5BFF;
+  --brass-light: #5C7CFF;
+  --blue: #2563EB;
+  --green: #0FA968;
+  --red: #DC3B45;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Numeric readouts always render in mono with tabular figures — the
+   signature detail that ties every screen back to "financial instrument". */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.font-display { font-family: var(--font-display); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2A3040; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #3A4155; }
+
+.glass {
+  background: rgba(16, 20, 31, 0.75);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.card-hover { transition: border-color 0.2s ease, transform 0.2s ease; }
+.card-hover:hover {
+  border-color: rgba(59, 91, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--brass), var(--brass-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--brass), var(--brass-light));
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59, 91, 255, 0.3); }
+.btn-primary:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.btn-secondary {
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid var(--border-strong);
+  color: var(--text-primary);
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.btn-secondary:hover { background: rgba(148, 163, 184, 0.12); border-color: rgba(59, 91, 255, 0.35); }
+
+.btn-danger-outline {
+  background: transparent;
+  border: 1px solid rgba(232, 85, 90, 0.35);
+  color: #E8555A;
+  border-radius: 8px;
+  padding: 11px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.btn-danger-outline:hover { background: rgba(232, 85, 90, 0.1); border-color: rgba(232, 85, 90, 0.6); }
+
+.input-field {
+  background: var(--input-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  padding: 11px 14px;
+  color: var(--text-primary);
+  width: 100%;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: border-color 0.15s ease, background-color 0.2s ease;
+}
+.input-field:focus {
+  outline: none;
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(59, 91, 255, 0.15);
+}
+.input-field::placeholder { color: var(--text-faint); }
+
+/* Number inputs lose their native up/down steppers by default — they clutter
+   dollar amounts, hours, and output counts you'd rather just type. Fields
+   that actually benefit from nudging a value (Expected growth %) opt back in
+   with .keep-spinner. */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+input[type='number'].keep-spinner {
+  -moz-appearance: number-input;
+  appearance: auto;
+}
+input[type='number'].keep-spinner::-webkit-inner-spin-button,
+input[type='number'].keep-spinner::-webkit-outer-spin-button {
+  -webkit-appearance: auto;
+  margin: 0 0 0 4px;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 14px;
+}
+.sidebar-item:hover { background: rgba(59, 91, 255, 0.08); color: var(--text-primary); }
+.sidebar-item.active { background: rgba(59, 91, 255, 0.14); color: var(--brass-light); }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-card-2) 50%, var(--bg-card) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.4s ease forwards; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+/* ==========================================================================
+   App-section light theme. Only re-colors utility classes inside .app-scope
+   (dashboard, sidebar, onboarding) — the marketing pages live in their own
+   .gloss-scope and always stay dark regardless of this setting.
+   ========================================================================== */
+
+[data-theme='light'] .app-scope { color-scheme: light; }
+[data-theme='light'] .app-scope .text-white { color: var(--text-primary); }
+[data-theme='light'] .app-scope .text-slate-300 { color: #334155; }
+[data-theme='light'] .app-scope .text-slate-400 { color: var(--text-muted); }
+[data-theme='light'] .app-scope .text-slate-500 { color: var(--text-muted); }
+[data-theme='light'] .app-scope .text-slate-600 { color: var(--text-faint); }
+[data-theme='light'] .app-scope .border-white\/5 { border-color: var(--border-subtle); }
+[data-theme='light'] .app-scope .border-white\/10 { border-color: var(--border-strong); }
+[data-theme='light'] .app-scope .bg-white\/5 { background-color: rgba(15, 23, 42, 0.04); }
+[data-theme='light'] .app-scope .bg-white\/\[0\.02\] { background-color: rgba(15, 23, 42, 0.025); }
+[data-theme='light'] .app-scope ::-webkit-scrollbar-thumb { background: #D6DAE5; }
+[data-theme='light'] .app-scope ::-webkit-scrollbar-thumb:hover { background: #C0C6D6; }
+[data-theme='light'] .app-scope .shadow-gloss-glow,
+[data-theme='light'] .app-scope .shadow-glow { box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(59, 91, 255, 0.1); }
+
+/* Theme switch (Settings page) */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+}
+.theme-switch button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.theme-switch button.active {
+  background: linear-gradient(135deg, var(--brass), var(--brass-light));
+  color: #fff;
+}
+
+/* ==========================================================================
+   Marketing pages (landing + pricing) — everything below is scoped under
+   .gloss-scope so it can never leak into /app or /onboarding.
+   ========================================================================== */
+
+.gloss-scope {
+  cursor: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .gloss-scope a,
+  .gloss-scope button,
+  .gloss-scope [role='button'],
+  .gloss-scope input,
+  .gloss-scope textarea,
+  .gloss-scope select,
+  .gloss-scope label,
+  .gloss-scope summary {
+    cursor: none;
+  }
+}
+
+@media (max-width: 768px), (hover: none) {
+  .gloss-scope {
+    cursor: auto;
+  }
+}
+
+.gloss-scope ::selection {
+  background: rgba(59, 91, 255, 0.35);
+  color: #fff;
+}
+
+.gloss-glossy-bg {
+  background:
+    radial-gradient(ellipse 60% 40% at 20% -10%, rgba(59, 91, 255, 0.16), transparent 60%),
+    radial-gradient(ellipse 50% 35% at 100% 10%, rgba(124, 155, 255, 0.10), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 120%, rgba(59, 91, 255, 0.10), transparent 60%),
+    linear-gradient(180deg, #07070a 0%, #0a0b10 50%, #07070a 100%);
+}
+
+.gloss-panel-glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.015));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px);
+}
+
+.gloss-text-gradient {
+  background: linear-gradient(90deg, #ffffff 0%, #b9c6ff 60%, #7c9bff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gloss-hairline {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+  height: 1px;
+}
+
+.gloss-signature-shimmer {
+  background: linear-gradient(
+    100deg,
+    #ececf1 30%,
+    #7c9bff 45%,
+    #ffffff 50%,
+    #7c9bff 55%,
+    #ececf1 70%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gloss-shimmer-sweep 5s ease-in-out infinite;
+}
+
+@keyframes gloss-shimmer-sweep {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@keyframes gloss-ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes gloss-ring-hue {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.gloss-comet-ring {
+  animation: gloss-ring-spin 2.4s linear infinite, gloss-ring-hue 3.6s linear infinite;
+}
